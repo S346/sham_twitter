@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTweetsTable extends Migration
+class CreateFriendsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,17 +12,14 @@ class CreateTweetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tweets', function(Blueprint $table)
+        Schema::create('friends', function(Blueprint $table)
         {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->integer('tweet_id')->unsigned()->nullable();
-            $table->foreign('tweet_id')->references('id')->on('tweets')->onDelete('cascade');
-            $table->string('body', 140);
-            $table->timestamp('published_at')->nullable();
+            $table->integer('friend_user_id')->unsigned();
+            $table->foreign('friend_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -33,6 +30,6 @@ class CreateTweetsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('tweets');
+        Schema::drop('friends');
     }
 }
