@@ -11,15 +11,14 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::controller('auth', 'Auth\AuthController');
 
-// Authentication routes...
-Route::get('auth/login', 'Auth\AuthController@getLogin');
-Route::post('auth/login', 'Auth\AuthController@postLogin');
-Route::get('auth/logout', 'Auth\AuthController@getLogout');
+Route::get('account', ['as' => 'user.edit', 'uses' => 'UsersController@edit']);
+Route::get('/', ['as' => 'tweet.index', 'uses' => 'TweetsController@index']);
+Route::get('tweet/all', ['as' => 'tweet.all_show', 'uses' => 'TweetsController@all_show']);
 
-// Registration routes...
-Route::get('auth/register', 'Auth\AuthController@getRegister');
-Route::post('auth/register', 'Auth\AuthController@postRegister');
+Route::post('password', ['as' => 'password.update', 'uses' => 'Auth\AuthController@update']);
+
+Route::resource('friend', 'FriendsController');
+Route::resource('tweet', 'TweetsController', ['except' => ['create', 'edit', 'index']]);
+Route::resource('user', 'UsersController', ['except' => ['create', 'edit', 'store']]);
