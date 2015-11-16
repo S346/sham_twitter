@@ -7,6 +7,10 @@ use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
+use App\Http\Requests;
+use Auth;
+use Hash;
 
 class AuthController extends Controller
 {
@@ -23,6 +27,8 @@ class AuthController extends Controller
 
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
+    protected $redirectTo = '/';
+
     /**
      * Create a new authentication controller instance.
      *
@@ -30,7 +36,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->middleware('guest', ['except' => ['getLogout', 'update']]);
     }
 
     /**
@@ -61,5 +67,18 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+
+        if(Hash::check($request->old_password, $user->password) && $request->password == $request->password_confirmation)
+        {
+            $user->update(['password' => bcrypt($request->password)]);
+            \Session::flash('flash_message', 'パスワードを変更しました。');
+        }
+
+        return redirect()->back();
     }
 }
